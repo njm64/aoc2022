@@ -8,8 +8,8 @@
   (mapcar (lambda (s) (coerce s 'list)) lines))
 
 (defun char-priority (c)
-  (cond ((char<= #\a c #\z) (- (+ (char-code c) 1)  (char-code #\a)))
-        ((char<= #\A c #\Z) (- (+ (char-code c) 27) (char-code #\A)))))
+  (cond ((lower-case-p c) (+ (- (char-code c) (char-code #\a)) 1))
+        ((upper-case-p c) (+ (- (char-code c) (char-code #\A)) 27))))
 
 (defun split-n (n lst)
   (loop for b = lst then (subseq b n)
