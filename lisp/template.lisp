@@ -1,6 +1,5 @@
 (defpackage :day1
-  (:use :cl)
-  (:export :run))
+  (:use :cl))
 
 (in-package :day1)
 
