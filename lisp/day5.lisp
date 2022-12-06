@@ -41,7 +41,7 @@
   (destructuring-bind (stacks rules) input
     (setf stacks (copy-array stacks))
     (loop for (n src dst) in rules do
-      (let ((tmp nil))
+      (let ((tmp))
         (loop repeat n do (push (pop-crate stacks src) tmp))
         (loop for c in tmp do (push-crate stacks dst c))))
     (map 'string #'first stacks)))
