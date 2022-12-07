@@ -32,7 +32,7 @@
       (print-node child (1+ depth)))))
 
 (defun parse-input (lines)
-  (let* ((root (make-instance 'node :name "/" :type :dir))
+  (let* ((root (make-dir "/"))
          (cwd root)
          (stack nil))
     (loop for line in lines do
