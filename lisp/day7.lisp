@@ -1,5 +1,5 @@
 (defpackage :day7
-  (:use :cl :uiop)
+  (:use :cl :uiop :trivia)
   (:shadowing-import-from :arrow-macros :->>))
 
 (in-package :day7)
@@ -36,21 +36,19 @@
          (cwd root)
          (stack nil))
     (loop for line in lines do
-      (let ((tok (str:words line)))
-        (cond
-          ((equal line "$ ls"))
-          ((equal line "$ cd /")
-           (setf cwd root stack nil))
-          ((equal line "$ cd ..")
-           (setf cwd (pop stack)))
-          ((string-prefix-p "$ cd " line)
-           (push cwd stack)
-           (setf cwd (find-child cwd (third tok))))
-          ((string-prefix-p "dir " line)
-           (add-child cwd (make-dir (second tok))))
-          (t
-           (destructuring-bind (size name) tok
-             (add-child cwd (make-file name (parse-integer size))))))))
+      (match (str:words line)
+        ((list "$" "ls"))
+        ((list "$" "cd" "/")
+         (setf cwd root stack nil))
+        ((list "$" "cd" "..")
+         (setf cwd (pop stack)))
+        ((list "$" "cd" name)
+         (push cwd stack)
+         (setf cwd (find-child cwd name)))
+        ((list "dir" name)
+         (add-child cwd (make-dir name)))
+        ((list size name)
+         (add-child cwd (make-file name (parse-integer size))))))
     root))
 
 (defun all-dirs (node)
