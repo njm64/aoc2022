@@ -5,9 +5,8 @@
 (in-package :day13)
 
 (defun parse-list (s)
-  (->> s
-    (str:replace-using '("[" "(" "]" ")" "," " "))
-    (read-from-string)))
+  (let ((*read-eval* nil))
+    (read-from-string (str:replace-using '("[" "(" "]" ")" "," " ") s))))
 
 (defun parse-pair (pair)
   (mapcar #'parse-list pair))
