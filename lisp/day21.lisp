@@ -3,17 +3,20 @@
 
 (in-package :day21)
 
+(defun make-kw (s)
+  (intern (string-upcase s) :keyword))
+
 ;; Monkeys are represented as a list of 2 or 4 elements:
 ;; (id, integer) or (id, a, operand, b)
 (defun parse-monkey (s)
   (destructuring-bind (id value) (str:split ": " s)
     (let ((tok (str:words value)))
-      (cons (intern (string-upcase id))
+      (cons (make-kw id)
             (ecase (length tok)
               (1 (list (parse-integer (first tok))))
-              (3 (list (intern (string-upcase (first tok)))
+              (3 (list (make-kw (first tok))
                        (char (second tok) 0)
-                       (intern (string-upcase (third tok))))))))))
+                       (make-kw (third tok)))))))))
 
 (defun parse-input (lines) (mapcar #'parse-monkey lines))
 
@@ -46,7 +49,7 @@
                    (#\/ (list b #\/ a))))))) ;; a = b / c -> c = b / a
 
 (defun resolve-value (monkeys id last-monkey)
-  (let* ((monkey (find-monkey monkeys id last-monkey)))
+  (let ((monkey (find-monkey monkeys id last-monkey)))
     (if (= (length monkey) 2)
         ;; If it's an integer value, just return it
         (second monkey)
@@ -58,19 +61,20 @@
                    (resolve-value monkeys b monkey))))))
 
 (defun part1 (monkeys)
-  (resolve-value monkeys 'root nil))
+  (resolve-value monkeys :root nil))
 
 (defun part2 (monkeys)
-  (let ((root (find-if (lambda (m) (eq (first m) 'root)) monkeys))
-        (humn (find-if (lambda (m) (eq (first m) 'humn)) monkeys)))
+  (let ((root (find :root monkeys :key #'first))
+        (humn (find :humn monkeys :key #'first)))
     ;; Remove the root and humn monkeys from the list
     (removef monkeys root)
     (removef monkeys humn)
     ;; Transform the root expression, effectively saying
     ;; that the first operand is equal to the value of the second.
-    (let ((monkey (list (nth 1 root) (resolve-value monkeys (nth 3 root) nil))))
+    (let ((monkey (list (nth 1 root)
+                        (resolve-value monkeys (nth 3 root) nil))))
       (push monkey monkeys))
     ;; Now just resolve the value for humn
-    (resolve-value monkeys 'humn nil)))
+    (resolve-value monkeys :humn nil)))
 
 
