@@ -1,5 +1,5 @@
 (defpackage :day16
-  (:use :cl :alexandria)
+  (:use :cl :alexandria :org.tfeb.hax.memoize)
   (:shadowing-import-from :arrow-macros :->>))
 
 (in-package :day16)
@@ -64,34 +64,32 @@
                                            :element-type 'fixnum
                                            :initial-contents costs))))))
 
-;; This works, but could use a bit of a cleanup and some optimisation.
-;; Part 1 runs in ~300ms, but part 2 takes a couple of minutes.
-(defun calc-pressure (valves visited index mins-remaining elephants)
-  (declare (optimize (speed 3) (safety 0)))
-  (declare (type simple-vector valves visited))
-  (declare (type fixnum mins-remaining elephants))
+;; Generate an integer memoization key, allowing 16 bits for each argument.
+;; This is more than enough. The visited bitmask needs 16 bits because there
+;; are 16 valves, and the others all need less.
+(defun memo-key (args)
+  (destructuring-bind (valves visited index mins-remaining elephants) args
+    (declare (ignore valves))
+    (logior visited (ash index 16) (ash mins-remaining 32) (ash elephants 48))))
+
+(def-memoized-function (calc-pressure :key #'memo-key) (valves visited index mins-remaining elephants)
   (let ((costs (valve-costs (aref valves index))))
     (let ((max-pressure 0))
-      (declare (type fixnum max-pressure))
-      (loop for v across visited
-            for i fixnum = 0 then (1+ i) do
-              (unless v
-                (let* ((new-mins (- mins-remaining (aref costs i) 1))
-                       (flow (valve-flow (aref valves i)))
-                       (pressure (the fixnum (* new-mins flow)))) 
-                  (when (>= new-mins 0)
-                    (setf (aref visited i) t)
-                    (maxf max-pressure (+ pressure (calc-pressure valves visited i new-mins elephants)))
-                    (setf (aref visited i) nil)))))
-      (if (plusp elephants)
-          (maxf max-pressure (calc-pressure valves visited 0 26 (1- elephants))))
+      (loop for v across valves
+            for i = 0 then (1+ i)
+            for mask = 1 then (ash mask 1)
+            unless (logtest visited mask) do
+              (let* ((new-mins (- mins-remaining (aref costs i) 1))
+                     (pressure (* new-mins (valve-flow v)))) 
+                (when (>= new-mins 0)
+                  (maxf max-pressure (+ pressure (calc-pressure valves (logior visited mask) i new-mins elephants))))))
+      (when (plusp elephants)
+        (maxf max-pressure (calc-pressure valves visited 0 26 (1- elephants))))
       max-pressure)))
 
 (defun run (nodes mins elephants)
-  (let* ((valves (coerce (make-valves nodes) 'vector))
-         (visited (make-array (length valves) :initial-element nil)))
-    (setf (aref visited 0) t)
-    (calc-pressure valves visited 0 mins elephants)))
+  (let ((valves (coerce (make-valves nodes) 'vector)))
+    (calc-pressure valves 1 0 mins elephants)))
 
 (defun part1 (nodes) (run nodes 30 0))
 (defun part2 (nodes) (run nodes 26 1))
