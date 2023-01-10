@@ -45,10 +45,10 @@
     (remove-if (lambda (n) (zerop (second n))))
     (mapcar #'first)))
 
-(defclass valve ()
-  ((id :initarg :id)
-   (flow :initarg :flow)
-   (costs :initarg :costs)))
+(defstruct valve
+  (id "" :type string)
+  (flow 0 :type fixnum)
+  (costs nil :type (simple-array fixnum)))
 
 ;; Build a list of all the valve nodes, with precalculated
 ;; costs from each node to all other nodes.
@@ -58,22 +58,27 @@
           collect
           (let ((costs (loop for dst in ids
                              collect (calc-distance nodes src dst))))
-            (make-instance 'valve
-                           :id src
-                           :flow (flow-for-id nodes src)
-                           :costs (coerce costs 'vector))))))
+            (make-valve :id src
+                        :flow (flow-for-id nodes src)
+                        :costs (make-array (length costs)
+                                           :element-type 'fixnum
+                                           :initial-contents costs))))))
 
 ;; This works, but could use a bit of a cleanup and some optimisation.
 ;; Part 1 runs in ~300ms, but part 2 takes a couple of minutes.
 (defun calc-pressure (valves visited index mins-remaining elephants)
-  (with-slots (id costs) (aref valves index)
+  (declare (optimize (speed 3) (safety 0)))
+  (declare (type simple-vector valves visited))
+  (declare (type fixnum mins-remaining elephants))
+  (let ((costs (valve-costs (aref valves index))))
     (let ((max-pressure 0))
+      (declare (type fixnum max-pressure))
       (loop for v across visited
-            for i = 0 then (1+ i) do
+            for i fixnum = 0 then (1+ i) do
               (unless v
                 (let* ((new-mins (- mins-remaining (aref costs i) 1))
-                       (flow (slot-value (aref valves i) 'flow))
-                       (pressure (* new-mins flow))) 
+                       (flow (valve-flow (aref valves i)))
+                       (pressure (the fixnum (* new-mins flow)))) 
                   (when (>= new-mins 0)
                     (setf (aref visited i) t)
                     (maxf max-pressure (+ pressure (calc-pressure valves visited i new-mins elephants)))
