@@ -1,0 +1,5 @@
+(library
+ (name aoc)
+ (libraries base stdio)
+ (preprocess
+  (pps ppx_compare ppx_deriving.show)))
