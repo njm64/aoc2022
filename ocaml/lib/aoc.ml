@@ -12,7 +12,8 @@ end
 let days : (module Day) list = [
   (module Day1); 
   (module Day2);
-  (module Day3)
+  (module Day3);
+  (module Day4)
 ]
 
 let module_for_day d =
