@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ "$1" == "" ]; then
+    echo "Usage: r <day number>"
+    exit
+fi
+
+DAY=$1
+INIT=/tmp/utop.ml
+
+dune top > $INIT
+echo open Aoc >> $INIT
+echo open Aoc__Day$DAY >> $INIT
+echo let raw = read_raw_input $DAY >> $INIT
+echo let input = parse_input raw >> $INIT
+
+utop -init $INIT
+
+
