@@ -3,7 +3,7 @@
 (setq aoc-day 6)
 
 (defun aoc-parse (lines)
-  (append (car lines)))
+  (append (car lines) nil))
 
 (defun find-marker (buf len)
   (let ((s buf) (n 0))
