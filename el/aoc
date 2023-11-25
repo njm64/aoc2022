@@ -1,7 +1,10 @@
 #!/bin/sh
 
 function run_day() {
-    emacs --batch --load path.el --load day$1.el --eval "(aoc-run)"
+    emacs --batch \
+          --eval "(add-to-list 'load-path \".\")" \
+          --load day$1.el \
+          --eval "(aoc-run)"
 }
 
 if [ "$#" -eq 0 ]; then
