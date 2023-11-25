@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ "$#" -eq 0 ]; then
+    echo "Usage: aoc <day>"
+else     
+    emacs --batch --load path.el --load day$1.el --eval "(aoc-run)"
+fi 
