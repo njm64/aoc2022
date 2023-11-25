@@ -1,7 +1,15 @@
 #!/bin/sh
 
-if [ "$#" -eq 0 ]; then
-    echo "Usage: aoc <day>"
-else     
+function run_day() {
     emacs --batch --load path.el --load day$1.el --eval "(aoc-run)"
+}
+
+if [ "$#" -eq 0 ]; then
+    D=1
+    while [ -f day$D.el ]; do
+      run_day $D
+      D=`expr $D + 1`
+    done
+else     
+  run_day $1
 fi 
