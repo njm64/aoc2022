@@ -13,6 +13,7 @@
 
 (defun lower-case-p (c) (<= ?a c ?z))
 (defun upper-case-p (c) (<= ?A c ?Z))
+(defun digit-char-p (c) (and (<= ?0 c ?9) (- c ?0)))
 
 (defun sum (lst)
   (seq-reduce #'+ lst 0))
@@ -28,5 +29,19 @@
     (when list
       (push (nreverse group) groups))
     (nreverse groups)))
+
+
+(defun matrix-width (m) (length (aref m 0)))
+(defun matrix-height (m) (length m))
+(defun matrix-dimensions (m) (list (matrix-width m) (matrix-height m)))
+(defun matrix-ref (m x y) (aref (aref m y) x))
+
+(defun matrix-coords (m)
+  (seq-let (w h) (matrix-dimensions f)
+    (let (coords)
+      (dotimes (x w)
+        (dotimes (y h)
+          (push (list x y) coords)))
+      coords)))
 
 (provide 'aoc-util)
