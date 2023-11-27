@@ -16,7 +16,6 @@
          (incf x (parse-integer n)))
         ((list "noop")
          (push x xs))))
-    (push x xs)
     (reverse xs)))
 
 (defun calc-pixel (cycle x)
