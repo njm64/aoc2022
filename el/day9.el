@@ -3,7 +3,7 @@
 (setq aoc-day 9)
 
 (defun parse-motion (line)
-  (seq-let (dir count) (string-split line " ")
+  (seq-let (dir count) (words line)
     (list (aref dir 0) (string-to-number count))))
 
 (defun aoc-parse (lines)

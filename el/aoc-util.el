@@ -15,6 +15,9 @@
 (defun upper-case-p (c) (<= ?A c ?Z))
 (defun digit-char-p (c) (and (<= ?0 c ?9) (- c ?0)))
 
+(defun words (s)
+  (string-split s " "))
+
 (defun sum (lst)
   (seq-reduce #'+ lst 0))
 
