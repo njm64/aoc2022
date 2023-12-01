@@ -16,7 +16,7 @@
 (defun digit-char-p (c) (and (<= ?0 c ?9) (- c ?0)))
 
 (defun words (s)
-  (string-split s " "))
+  (seq-remove #'string-empty-p (string-split s " ")))
 
 (defun sum (lst)
   (seq-reduce #'+ lst 0))
@@ -32,7 +32,6 @@
     (when list
       (push (nreverse group) groups))
     (nreverse groups)))
-
 
 (defun matrix-width (m) (length (aref m 0)))
 (defun matrix-height (m) (length m))
