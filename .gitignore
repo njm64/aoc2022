@@ -1,2 +1,5 @@
 input 
 *.fasl
+*.hi
+*.o
+main
