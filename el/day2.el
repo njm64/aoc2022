@@ -4,7 +4,7 @@
 
 (defun parse-line (line)
   (mapcar (lambda (s) (aref s 0))
-          (string-split line " ")))
+          (words line)))
 
 (defun aoc-parse (lines)
   (mapcar 'parse-line lines))

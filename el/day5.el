@@ -17,7 +17,7 @@
     stacks))
 
 (defun parse-rule (s)
-  (let ((w (string-split s " ")))
+  (let ((w (words s)))
     (mapcar 'string-to-number
             (list (elt w 1) (elt w 3) (elt w 5)))))
 

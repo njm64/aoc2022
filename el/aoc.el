@@ -19,10 +19,10 @@
   (float-time (current-time)))
 
 (defun aoc-run-part (n f input)
-  (princ (format "Day %2d Part %d: " aoc-day n))
   (let ((start-time (aoc-time))
         (result (funcall f input)))
-    (princ (format "%-20s %0.6fs\n"
+    (princ (format "Day %2d Part %d: %-20s %0.6fs\n"
+                   aoc-day n
                    result (- (aoc-time) start-time)))))
   
 (defun aoc-run ()

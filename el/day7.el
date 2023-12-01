@@ -25,7 +25,7 @@
          (cwd root)
          (stack nil))
     (dolist (line lines)
-      (pcase (string-split line " ")
+      (pcase (words line)
         (`("$" "ls"))
         (`("$" "cd" "/")
          (setf cwd root stack nil))
