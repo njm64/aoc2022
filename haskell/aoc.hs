@@ -12,7 +12,7 @@ inputDir testMode
 
 readInputWithMode :: Bool -> Int -> IO [String]
 readInputWithMode testMode day = do
-  let filename = (inputDir testMode) ++ "/day" ++ show day ++ ".txt"
+  let filename = inputDir testMode ++ "/day" ++ show day ++ ".txt"
   contents <- readFile filename
   let input = lines contents
   return input
